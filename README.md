@@ -46,15 +46,28 @@ The implemented multitasking scheduler is a Cooperative Earliest Deadline First 
   Is task time-dependent and time-sensitive? If you are making a clock, you would need time strictness to update the internal values. Otherwise if you are just getting a temperature reading 6 times per minute, do you really need it to be exactly at 0, 10, 20, 30, 40, 50, 60 seconds? Or it is OK to run the task at 1, 9, 22, 30, 41, 53, 59 seconds?
   
   For now, it is only On/Off. In the future you can expect to see an "alpha" value that defines the strictness.
+  
+  **Time Strictness is enabled by default on all tasks unless specified.**
 
 **6. Catch-up**
 
   This allows the scheduler to know if a task needs to catch-up if it is late. If yes, a task that was not able to run for the past 5 intervals will run 5 times consecutively when the CPU is available. If no, the scheduler will drop those 5 last runs and continue on.
   
   If you are implementing a counter, you need Catch-up, since if the task missed its deadline 5 times, it will need to add 5 times when the CPU is available. But if you are implementing a real-time interface, catching up is useless since the event (say a button press) already happened and you missed it. No need to check the button press 5 times in a row within nanoseconds.
+  
+  **Catch-up is enabled by default on all tasks unless specified.**
+
 
 **7. Periodicity Strictness**
 
+  This allows the scheduler to know if a task depends on its periodicity. If yes, a task will be targeted to run at specific intervals, independently of when it actually ran. If no, a task that is late will make all subsequent runs late by the same amount.
+  
+  Time sensitive applications will need periodicity strictness, but not all applications.
+  
+  **Periodicity Strictness is enabled by default on all tasks unless specified.**
+
 # Benchmarks
+
+  I know this scheduler is not as lightweight than other similar libraries, but by trading some efficiency, you get better features and better management of idle CPU resources.
 
 (TODO)
