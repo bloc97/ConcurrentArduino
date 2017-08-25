@@ -1,21 +1,14 @@
 #include "Runnable.h"
 
-Runnable * Runnable::createRecurrentTask(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, bool startTimeStrict, bool catchup, bool periodicity) {
-	return new Runnable(f, targetIntervalMicrosecond, initialWaitMicrosecond, -1, startTimeStrict, catchup, periodicity);
-}
-
-Runnable * Runnable::createLoopTask(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, int numTriggers, bool startTimeStrict, bool catchup, bool periodicity) {
+Runnable * Runnable::createTask(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, int numTriggers, bool startTimeStrict, bool catchup, bool periodicity) {
 	return new Runnable(f, targetIntervalMicrosecond, initialWaitMicrosecond, numTriggers, startTimeStrict, catchup, periodicity);
 	
 }
 
-Runnable * Runnable::createOneTimeTask(void (*f)(), unsigned long initialWaitMicrosecond, bool startTimeStrict) {
-	return new Runnable(f, 1000, initialWaitMicrosecond, 1, startTimeStrict, false, false);
-}
-
-Runnable::Runnable(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, int numTriggers, bool startTimeStrict, bool catchup, bool periodicity) {
+Runnable::Runnable(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, unsigned long numTriggers, bool startTimeStrict, bool catchup, bool periodicity) {
 	main = f;
 	targetWaitTimeMicrosecond = targetIntervalMicrosecond;
+        this->initialWaitMicrosecond = initialWaitMicrosecond;
 	nextTargetStartMicros = micros() + initialWaitMicrosecond;
 	maxTrigger = numTriggers;
 	isStartTimeStrict = startTimeStrict;
@@ -72,6 +65,7 @@ void Runnable::run() {
 
 void Runnable::start() {
     isEnabled = true;
+    nextTargetStartMicros = micros() + initialWaitMicrosecond;
 }
 
 void Runnable::stop() {
@@ -93,11 +87,15 @@ void Runnable::setMaxTrigger(int maxTrigger) {
 }
 
 void Runnable::setNextTargetStart(unsigned long micros) {
-    nextTargetStartMicros = nextTargetStartMicros;
+    nextTargetStartMicros = micros;
+}
+
+void Runnable::setInitialWait(unsigned long micros) {
+    initialWaitMicrosecond = micros;
 }
 
 void Runnable::setInterval(unsigned long micros) {
-    targetWaitTimeMicrosecond = targetWaitTimeMicrosecond;
+    targetWaitTimeMicrosecond = micros;
 }
 
 bool Runnable::isRunning() const {
@@ -112,7 +110,7 @@ bool Runnable::isStrict() const {
     return isStartTimeStrict;
 }
 
-bool Runnable::doCatchup() const {
+bool Runnable::isDoCatchup() const {
     return doCatchup;
 }
 

@@ -5,6 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>Arduino.h</itemPath>
+      <itemPath>RunnableBuilder.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -52,6 +53,8 @@
       </item>
       <item path="Runnable.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="RunnableBuilder.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="3">
       <toolsSet>
@@ -84,6 +87,8 @@
       <item path="Runnable.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Runnable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RunnableBuilder.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
