@@ -79,6 +79,10 @@ Future features:
   
   ###### Periodicity Strictness is enabled by default on all tasks unless specified.
 
+** Note: Background Tasks**
+
+  By turning 5, 6 and 7 off, then setting the recurring interval to 0, you can create a 'background task'. This task will be ran as often as possible whenever the CPU is not used by higher priority tasks. It is advised to put background tasks at the lowest priority.
+
 # Benchmarks
 
   I know this scheduler is not as lightweight than other similar libraries, but by trading some efficiency, you get better features and better management of idle CPU resources.
