@@ -22,7 +22,9 @@
 class RunnableBuilder {
 
 public:
-
+    
+    
+    
     RunnableBuilder(void (*f)()) {
         this->f = f;
     }
@@ -117,13 +119,13 @@ public:
     }
 
     Runnable * build() {
-        return Runnable::createTask(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
+        return new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
     }
 
-    Runnable * start(JobScheduler& scheduler, int priority) {
-        Runnable * runnable = * Runnable::createTask(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
+    Runnable * start(JobScheduler & scheduler, int priority) {
+        Runnable * runnable = new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
         runnable->start();
-        scheduler.add(this, priority);
+        scheduler.add(runnable, priority);
         return runnable;
     }
 

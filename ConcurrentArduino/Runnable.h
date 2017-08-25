@@ -2,15 +2,12 @@
 #define Runnable_h
 #include <Arduino.h>
 
-#include "JobScheduler.h"
-
 
 class Runnable {
 public:
 
-    static Runnable * createTask(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, int numTriggers, bool startTimeStrict, bool catchup, bool periodicity);
-
-
+    Runnable(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, unsigned long numTriggers, bool startTimeStrict, bool catchup, bool periodicity);
+    
     void run();
 
     void start();
@@ -68,10 +65,6 @@ private:
     unsigned long triggerCount;
 
     void (*main)();
-
-    Runnable(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, unsigned long numTriggers, bool startTimeStrict, bool catchup, bool periodicity);
-
-
 
 };
 

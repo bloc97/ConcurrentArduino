@@ -1,9 +1,5 @@
 #include "Runnable.h"
 
-Runnable * Runnable::createTask(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, int numTriggers, bool startTimeStrict, bool catchup, bool periodicity) {
-	return new Runnable(f, targetIntervalMicrosecond, initialWaitMicrosecond, numTriggers, startTimeStrict, catchup, periodicity);
-	
-}
 
 Runnable::Runnable(void (*f)(), unsigned long targetIntervalMicrosecond, unsigned long initialWaitMicrosecond, unsigned long numTriggers, bool startTimeStrict, bool catchup, bool periodicity) {
 	main = f;
