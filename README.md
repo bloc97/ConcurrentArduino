@@ -88,3 +88,80 @@ Future features:
   I know this scheduler is not as lightweight than other similar libraries, but by trading some efficiency, you get better features and better management of idle CPU resources.
 
 (TODO)
+
+# Usage
+It is very easy to get started.
+
+```cpp
+#include <JobScheduler.h>
+#include <Runnable.h>
+#include <RunnableBuilder.h>
+
+JobScheduler scheduler; //Creates the scheduler (It is recommended to only have one)
+
+void customFunction() {
+  //Custom code here
+}
+
+void setup() {
+  RunnableBuilder(customFunction).setRecurrent(1000).start(scheduler, 1);
+  /*
+    This will run customFunction() each second with a medium priority
+    
+    0 is highest priority, 2 is lowest (by default)
+    You can add priority levels by changing the constant "PRIORITY_NUM = 3" in JobScheduler.h
+    
+    By default, the JobScheduler can fit 10 Tasks per Priority Queue, if a queue is full, adding a task will do nothing.
+    You can change the size of the queue by changing the constant "MAX_JOBS = 10" in JobScheduler.h
+  */
+}
+
+void loop() {
+  scheduler.run(); //Run the scheduler in the loop, not recommended to run anything else in the main loop as it might interfere with the scheduler.
+}
+
+```
+
+# Examples
+
+Nothing teaches faster than examples.
+
+### Recurrent Tasks
+
+Start a medium priority 1-second recurrent task after waiting 2 seconds.  
+`RunnableBuilder(customFunction).setRecurrent(1000, 2000).start(scheduler, 1);`
+
+Start a high priority 100-microsecond recurrent task immediately.  
+`RunnableBuilder(customFunction).setRecurrentMicroseconds(100).start(scheduler, 0);`
+
+Starts a low priority background task by disabling Strict Time, Catch-up and Strict Periodicity, and setting the interval to 0.  
+`RunnableBuilder(customFunction).setRecurrent(0).setIsStartTimeStrict(false).setDoCatchup(false).setIsPeriodicityStrict(false).start(scheduler, 2);`
+
+### Iterative Tasks
+
+Start a medium priority 5-second iterative task for 10 runs immediately.  
+`RunnableBuilder(customFunction).setLoop(5000, 10).start(scheduler, 1);`
+
+### Run-Once Tasks
+
+Start a high priority one-time task immediately.  
+`RunnableBuilder(customFunction).setOnce().start(scheduler, 0);`
+
+Start a low priority one-time task after 50ms.  
+`RunnableBuilder(customFunction).setOnce(50).start(scheduler, 2);`
+
+### Building without starting
+
+You can build a Runnable and save it to a pointer without starting it yet.  
+`Runnable * myRunnable = RunnableBuilder(customFunction).setOnce().build();`  
+You can then start it using another task or an event like so.  
+`scheduler.execute(runnable, 1); //Starts the Runnable using priority 1`  
+Or like so  
+```cpp
+scheduler.add(runnable, 1);
+runnable->start();
+```
+
+# Reference
+
+(TODO)
