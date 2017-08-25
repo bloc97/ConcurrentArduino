@@ -43,7 +43,7 @@ The implemented multitasking scheduler is a Cooperative Earliest Deadline First 
 **5. Time Strictness**
 
   This allows the scheduler to know if the task is time-sensitive. If yes, the scheduler will try its best to meet the deadline and run the task at exactly the time specified. If no, the scheduler can run the task ahead or behind its time when there are free CPU cycles.      
-  Is task time-dependent and time-sensitive? If you are making a clock, you would need time strictness to update the internal values. Otherwise if you are just getting a temperature reading 6 times per minute, do you really need it to be exactly at 0, 10, 20, 30, 40, 50, 60 seconds? Or it is OK to run the task at 1, 9, 22, 30, 41, 53, 59 seconds?
+  Is task time-dependent and time-sensitive? If you are interfacing a morse-code machine, you would need time strictness to update the speaker/solenoid. Otherwise if you are just getting a temperature reading 6 times per minute, do you really need it to be exactly at 0, 10, 20, 30, 40, 50, 60 seconds? Or it is OK to run the task at 1, 9, 22, 30, 41, 53, 59 seconds?
   
   For now, it is only On/Off. In the future you can expect to see an "alpha" value that defines the strictness.
   
