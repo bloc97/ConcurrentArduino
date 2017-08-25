@@ -19,6 +19,13 @@ The implemented multitasking scheduler is a Cooperative Earliest Deadline First 
 * Dynamic parameters *(Change the task properties at will)*
 * Power saving when Idle
 * Creation of time-critical, periodic or lenient tasks
+* Prediction of future task execution time.
+* Automatic pausing of tasks that would affect higher priority tasks.
+
+Future features:
+
+* Logging
+* Resource query (Show all processes, CPU usage and memory usage)
 
 # Theory
 
