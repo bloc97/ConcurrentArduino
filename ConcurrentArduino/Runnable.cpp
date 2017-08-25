@@ -141,6 +141,15 @@ long Runnable::getLastStartOffsetTime() {
 unsigned long Runnable::getAverageRunningTime() const {
     return averageRunningTimeMicrosecond;
 }
+
+unsigned long Runnable::getMaxTrigger() const {
+    return maxTrigger;
+}
+
+unsigned long Runnable::getTriggerCount() const {
+    return triggerCount;
+}
+    
 unsigned long Runnable::getPredictedRunningTime() {
     unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
 	

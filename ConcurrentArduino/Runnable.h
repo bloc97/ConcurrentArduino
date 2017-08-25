@@ -29,6 +29,10 @@ public:
     unsigned long getTargetWaitTime() const;
 
     unsigned long getAverageRunningTime() const;
+    
+    
+    unsigned long getMaxTrigger() const;
+    unsigned long getTriggerCount() const;
 
     unsigned long getLastRunningTime();
     unsigned long getPredictedRunningTime();
