@@ -47,7 +47,9 @@ The implemented multitasking scheduler is a Cooperative Earliest Deadline First 
   
   For now, it is only On/Off. In the future you can expect to see an "alpha" value that defines the strictness.
   
-  **Time Strictness is enabled by default on all tasks unless specified.**
+  ![Time Strictness Comparison Timeline](https://github.com/bloc97/ConcurrentArduino/blob/master/img/Strict.png "Time Strictness Comparison Timeline")
+
+  ###### Time Strictness is enabled by default on all tasks unless specified.
 
 **6. Catch-up**
 
@@ -55,7 +57,9 @@ The implemented multitasking scheduler is a Cooperative Earliest Deadline First 
   
   If you are implementing a counter, you need Catch-up, since if the task missed its deadline 5 times, it will need to add 5 times when the CPU is available. But if you are implementing a real-time interface, catching up is useless since the event (say a button press) already happened and you missed it. No need to check the button press 5 times in a row within nanoseconds.
   
-  **Catch-up is enabled by default on all tasks unless specified.**
+  ![Catch-up Comparison Timeline](https://github.com/bloc97/ConcurrentArduino/blob/master/img/Catchup.png "Catch-up Comparison Timeline")
+  
+  ###### Catch-up is enabled by default on all tasks unless specified.*
 
 
 **7. Periodicity Strictness**
@@ -64,7 +68,9 @@ The implemented multitasking scheduler is a Cooperative Earliest Deadline First 
   
   Time sensitive applications will need periodicity strictness, but not all applications.
   
-  **Periodicity Strictness is enabled by default on all tasks unless specified.**
+  ![Periodicity Strictness Comparison Timeline](https://github.com/bloc97/ConcurrentArduino/blob/master/img/Periodicity.png "Periodicity Strictness Comparison Timeline")
+  
+  ###### Periodicity Strictness is enabled by default on all tasks unless specified.
 
 # Benchmarks
 
