@@ -25,119 +25,138 @@ Runnable::Runnable(void (*f)(), unsigned long targetIntervalMicrosecond, unsigne
 	lastTargetStartMicros = nextTargetStartMicros - targetIntervalMicrosecond;
 	lastStartMicros = 0;
 	lastEndMicros = 0;
-	
 	averageRunningTimeMicrosecond = 0;
 }
 
 void Runnable::run() {
-	unsigned long thisTargetStartMicros = nextTargetStartMicros;
-	unsigned long thisStartMicros = micros();
-	
-	main();
-	
-	triggerCount++;
-	if (maxTrigger > 0 && triggerCount >= maxTrigger) {
-		destroy();
-		return;
-	}
-	
-	unsigned long thisEndMicros = micros();
-	
-	
-	if (doCatchup) {
-		if (isPeriodicityStrict) {
-			nextTargetStartMicros = thisTargetStartMicros + targetWaitTimeMicrosecond;
-		} else {
-			nextTargetStartMicros = thisTargetStartMicros + (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) + targetWaitTimeMicrosecond;
-		}
-	} else {
-		if (isPeriodicityStrict) {
-			nextTargetStartMicros = ( thisStartMicros - (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) ) + targetWaitTimeMicrosecond;
-		} else {
-			nextTargetStartMicros = thisStartMicros + targetWaitTimeMicrosecond;
-		}
-	}
-	lastTargetStartMicros = thisTargetStartMicros;
-	lastStartMicros = thisStartMicros;
-	lastEndMicros = thisEndMicros;
-	
-	if (averageRunningTimeMicrosecond == 0) {
-		averageRunningTimeMicrosecond = lastEndMicros - lastStartMicros;
-	} else {
-		//averageRunningTimeMicrosecond = alpha * (lastEndMicros - lastStartMicros) + (1.0 - alpha) * averageRunningTimeMicrosecond;
-		//averageRunningTimeMicrosecond *= (1.0 - alpha);
-		//averageRunningTimeMicrosecond += alpha * (lastEndMicros - lastStartMicros);
-		
-		averageRunningTimeMicrosecond += (lastEndMicros - lastStartMicros);
-		averageRunningTimeMicrosecond /= 2;
-		
-	}
+    unsigned long thisTargetStartMicros = nextTargetStartMicros;
+    unsigned long thisStartMicros = micros();
+
+    main();
+
+    triggerCount++;
+    if (maxTrigger > 0 && triggerCount >= maxTrigger) {
+        destroy();
+        return;
+    }
+
+    unsigned long thisEndMicros = micros();
+
+
+    if (doCatchup) {
+        if (isPeriodicityStrict) {
+            nextTargetStartMicros = thisTargetStartMicros + targetWaitTimeMicrosecond;
+        } else {
+            nextTargetStartMicros = thisTargetStartMicros + (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) + targetWaitTimeMicrosecond;
+        }
+    } else {
+        if (isPeriodicityStrict) {
+            nextTargetStartMicros = ( thisStartMicros - (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) ) + targetWaitTimeMicrosecond;
+        } else {
+            nextTargetStartMicros = thisStartMicros + targetWaitTimeMicrosecond;
+        }
+    }
+    lastTargetStartMicros = thisTargetStartMicros;
+    lastStartMicros = thisStartMicros;
+    lastEndMicros = thisEndMicros;
+
+    if (averageRunningTimeMicrosecond == 0) {
+        averageRunningTimeMicrosecond = lastEndMicros - lastStartMicros;
+    } else {
+
+        averageRunningTimeMicrosecond += (lastEndMicros - lastStartMicros);
+        averageRunningTimeMicrosecond /= 2;
+
+    }
 }
 
 
 void Runnable::start() {
-	isEnabled = true;
+    isEnabled = true;
 }
 
 void Runnable::stop() {
-	isEnabled = false;
+    isEnabled = false;
 }
 
 void Runnable::destroy() {
-	isEnabled = false;
-	isToBeDestroyed = true;
+    isEnabled = false;
+    isToBeDestroyed = true;
 }
 
 
+void Runnable::setFunction(void(*f)()) {
+    main = f;
+}
+
+void Runnable::setMaxTrigger(int maxTrigger) {
+    maxTrigger = maxTrigger;
+}
+
+void Runnable::setNextTargetStart(unsigned long micros) {
+    nextTargetStartMicros = nextTargetStartMicros;
+}
+
+void Runnable::setInterval(unsigned long micros) {
+    targetWaitTimeMicrosecond = targetWaitTimeMicrosecond;
+}
 
 bool Runnable::isRunning() const {
-	return isEnabled;
+    return isEnabled;
 }
 
 bool Runnable::isDestroying() const {
-	return isToBeDestroyed;
+    return isToBeDestroyed;
 }
 	
 bool Runnable::isStrict() const {
-	return isStartTimeStrict;
+    return isStartTimeStrict;
 }
 
+bool Runnable::doCatchup() const {
+    return doCatchup;
+}
+
+bool Runnable::isPeriodic() const {
+    return isPeriodicityStrict;
+}
+        
 unsigned long Runnable::getLastTargetStart() const {
-	return lastTargetStartMicros;
+    return lastTargetStartMicros;
 }
 
 unsigned long Runnable::getLastStart() const {
-	return lastStartMicros;
+    return lastStartMicros;
 }
 
 unsigned long Runnable::getLastEnd() const {
-	return lastEndMicros;
+    return lastEndMicros;
 }
 
 unsigned long Runnable::getNextTargetStart() const {
-	return nextTargetStartMicros;
+    return nextTargetStartMicros;
 }
 
 unsigned long Runnable::getLastRunningTime() {
-	return lastEndMicros - lastStartMicros;
+    return lastEndMicros - lastStartMicros;
 }
 
 long Runnable::getLastStartOffsetTime() {
-	return lastStartMicros - lastTargetStartMicros;
+    return lastStartMicros - lastTargetStartMicros;
 }
 
 unsigned long Runnable::getAverageRunningTime() const {
-	return averageRunningTimeMicrosecond;
+    return averageRunningTimeMicrosecond;
 }
 unsigned long Runnable::getPredictedRunningTime() {
-	unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
+    unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
 	
-	//Using linear interpolation
-	return 2 * lastRunningTime - averageRunningTimeMicrosecond;
+    //Using linear interpolation
+    return 2 * lastRunningTime - averageRunningTimeMicrosecond;
 	
 }
 
 
 unsigned long Runnable::getTargetWaitTime() const {
-	return targetWaitTimeMicrosecond;
+    return targetWaitTimeMicrosecond;
 }
