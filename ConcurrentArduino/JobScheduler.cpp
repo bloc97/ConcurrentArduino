@@ -55,16 +55,22 @@ bool JobScheduler::run() {
 	
 }
 
-void JobScheduler::add(Runnable * runnable, int priority) {
+bool JobScheduler::add(Runnable * runnable, int priority) {
     if (priority < PRIORITY_NUM) {
         for (int n=0; n<MAX_JOBS; n++) {
             if (priorities[priority][n] == NULL) {
                 priorities[priority][n] = runnable;
-                return;
+                return true;
             }
         }
     }
-	
+    return false;
+}
+
+void JobScheduler::execute(Runnable * runnable, int priority) {
+    if (add(runnable, priority) {
+        runnable->start();
+    }
 }
 
 bool JobScheduler::runStrict() {

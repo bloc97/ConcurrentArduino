@@ -8,11 +8,10 @@ class JobScheduler {
     public:
         
         bool run();
-        void add(Runnable * runnable, int priority);
+        bool add(Runnable * runnable, int priority);
+        void execute(Runnable * runnable, int priority);
 		
     private:
-        
-        JobScheduler(){};
         
         static const int MAX_JOBS = 10;
         static const int PRIORITY_NUM = 3;
