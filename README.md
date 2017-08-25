@@ -79,9 +79,9 @@ Future features:
   
   ###### Periodicity Strictness is enabled by default on all tasks unless specified.
 
-** Note: Background Tasks**
+**Note: Background Tasks**
 
-  By turning 5, 6 and 7 off, then setting the recurring interval to 0, you can create a 'background task'. This task will be ran as often as possible whenever the CPU is not used by higher priority tasks. It is advised to put background tasks at the lowest priority.
+  By turning 5, 6 and 7 off, then setting the recurring interval to 0, you can create a 'background task'. This task will be ran as often as possible whenever the CPU is not used by higher priority tasks. It is recommended to put background tasks at the lowest priority.
 
 # Benchmarks
 
