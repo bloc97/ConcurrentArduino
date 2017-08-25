@@ -68,7 +68,7 @@ bool JobScheduler::add(Runnable * runnable, int priority) {
 }
 
 void JobScheduler::execute(Runnable * runnable, int priority) {
-    if (add(runnable, priority) {
+    if (add(runnable, priority)) {
         runnable->start();
     }
 }
