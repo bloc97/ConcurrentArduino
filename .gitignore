@@ -30,3 +30,4 @@
 *.exe
 *.out
 *.app
+ConcurrentArduino/Arduino.h

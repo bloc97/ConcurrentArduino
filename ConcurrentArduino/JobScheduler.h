@@ -25,7 +25,7 @@ class JobScheduler {
 
         bool runStrict(); //Jobs where start time is strict, must happen closest to target Microsecond counter
         bool runNonStrict(); //Jobs where start time is not strict, allows to run on idle cpu
-		
+        
 };
 
 #endif

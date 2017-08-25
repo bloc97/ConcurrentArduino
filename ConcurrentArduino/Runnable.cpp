@@ -70,7 +70,6 @@ void Runnable::run() {
     }
 }
 
-
 void Runnable::start() {
     isEnabled = true;
 }
