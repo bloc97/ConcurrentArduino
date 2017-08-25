@@ -155,11 +155,11 @@ Start a low priority one-time task after 50ms.
 You can build a Runnable and save it to a pointer without starting it yet.  
 `Runnable * myRunnable = RunnableBuilder(customFunction).setOnce().build();`  
 You can then start it using another task or an event like so.  
-`scheduler.execute(runnable, 1); //Starts the Runnable using priority 1`  
+`scheduler.execute(myRunnable, 1); //Starts the Runnable using priority 1`  
 Or like so  
 ```cpp
-scheduler.add(runnable, 1);
-runnable->start();
+scheduler.add(myRunnable, 1);
+myRunnable->start();
 ```
 
 # Reference
