@@ -31,3 +31,4 @@
 *.out
 *.app
 ConcurrentArduino/Arduino.h
+ConcurrentArduino/nbproject
