@@ -154,7 +154,14 @@ unsigned long Runnable::getPredictedRunningTime() {
     unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
 	
     //Using linear interpolation
-    return 2 * lastRunningTime - averageRunningTimeMicrosecond;
+	
+	unsigned long twoLastRunningTime = 2 * lastRunningTime;
+	
+	if (lastRunningTime <= averageRunningTimeMicrosecond) { //Handle the negative case (sometimes the micro() resolution is not enough)
+		return 0;
+	}
+	
+    return twoLastRunningTime - averageRunningTimeMicrosecond;
 	
 }
 
