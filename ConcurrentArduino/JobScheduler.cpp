@@ -12,8 +12,13 @@ void JobScheduler::calculateIndexes() {
 
         for (int n=0; n<MAX_JOBS; n++) {
             if (priorities[i][n] != NULL) {
-                if (priorities[i][n]->isRunning() && priorities[i][n]->isStrict()) {
+                if (priorities[i][n]->isRunning()) {
+                    
                     long thisTime = priorities[i][n]->getNextTargetStart() - currentTime;
+                    
+                    if (!priorities[i][n]->isStrict()) { //If task is not time strict
+                        thisTime = thisTime + (priorities[i][n]->getTargetWaitTime()/2); //Add leniency in the target time;
+                    }
 
                     if (thisTime < minimumTime) {
                         minimumTime = thisTime;
