@@ -86,11 +86,15 @@ bool JobScheduler::runStrict() {
 
     for (int i=0; i<PRIORITY_NUM; i++) {
 
-        if (indexes[i] != -1) { //If there is a strict job in this priority
+        if (indexes[i] != -1) { //If there is a job with a deadline in this priority
 
             //indexes[i] is the job that is the most urgent
             long diffTime = priorities[i][indexes[i]]->getNextTargetStart() - currentTime; //Time difference between the Target time and now
 
+            if (!priorities[i][indexes[i]]->isStrict()) { //If job is not strict
+                diffTime = diffTime + (priorities[i][indexes[i]]->getTargetWaitTime()/2); //Add leniency in the target time;
+            }
+            
             if (diffTime <= 0 && priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) { //If target time has passed and the predicted running time won't exceed maximum allocated time
                 priorities[i][indexes[i]]->run();
                 return true;
@@ -113,10 +117,15 @@ bool JobScheduler::runNonStrict() {
 
     for (int i=0; i<PRIORITY_NUM; i++) {
 
-        if (indexes[i] != -1) { //If there is a strict job in this priority
+        if (indexes[i] != -1) { //If there is a job with a deadline in this priority
 
             //indexes[i] is the job that is the most urgent
             long diffTime = priorities[i][indexes[i]]->getNextTargetStart() - currentTime; //Time difference between the Target time and now
+            
+            if (!priorities[i][indexes[i]]->isStrict()) { //If job is not strict
+                diffTime = diffTime + (priorities[i][indexes[i]]->getTargetWaitTime()/2); //Add leniency in the target time;
+            }
+            
             maximumAllocatedTime = min(maximumAllocatedTime, diffTime); //The minimum of the diffTimes is the maximum execution time allocated for the Non Strict jobs
 
         }
