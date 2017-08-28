@@ -78,6 +78,12 @@ void Runnable::setFunction(void(*f)()) {
     main = f;
 }
 
+void Runnable::setProperties(bool isStrict, bool doCatchup, bool isPeriodic) {
+    this->isStartTimeStrict = isStrict;
+    this->doCatchup = doCatchup;
+    this->isPeriodicityStrict = isPeriodic;
+}
+
 void Runnable::setMaxTrigger(int maxTrigger) {
     maxTrigger = maxTrigger;
 }

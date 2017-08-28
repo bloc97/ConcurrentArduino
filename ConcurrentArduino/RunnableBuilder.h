@@ -123,6 +123,10 @@ public:
     }
 
     Runnable * start(JobScheduler & scheduler, int priority) {
+        if (interval == 0) {
+            doCatchup = false;
+            isPeriodicityStrict = false;
+        }
         Runnable * runnable = new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
         runnable->start();
         scheduler.add(runnable, priority);

@@ -39,6 +39,7 @@ public:
     long getLastStartOffsetTime();
 
     void setFunction(void(*f)());
+    void setProperties(bool isStrict, bool doCatchup, bool isPeriodic);
     void setMaxTrigger(int maxTrigger);
     void setNextTargetStart(unsigned long micros);
     void setInitialWait(unsigned long micros);

@@ -1,7 +1,7 @@
 #include "Runnable.h"
 #include "JobScheduler.h"
 
-void JobScheduler::calculateIndexes() {
+void JobScheduler::preStep() {
 	
     unsigned long currentTime = micros();
 
@@ -24,38 +24,24 @@ void JobScheduler::calculateIndexes() {
                         minimumTime = thisTime;
                         indexes[i] = n;
                     }
-                }
-            }
-        }
-    }
-
-	
-}
-
-
-void JobScheduler::collectGarbage() {
-    for (int i=0; i<PRIORITY_NUM; i++) {
-        for (int n=1; n<MAX_JOBS; n++) {
-            if (priorities[i][n] != NULL) {
-                if (priorities[i][n]->isDestroying()) {
+                } else if (priorities[i][n]->isDestroying()) { //Garbage collection
                     delete priorities[i][n];
                     priorities[i][n] = NULL;
                 }
             }
-
         }
     }
+
 	
 }
 
 bool JobScheduler::run() {
-    collectGarbage();
-    calculateIndexes();
+    preStep();
 
     if (runStrict()) {
         return true;
     }
-    calculateIndexes();
+    preStep();
     return runNonStrict();
 	
 }
