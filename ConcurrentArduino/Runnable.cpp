@@ -156,6 +156,10 @@ unsigned long Runnable::getTriggerCount() const {
     return triggerCount;
 }
     
+unsigned long Runnable::getInitialWaitTime() const {
+    return initialWaitMicrosecond;
+}
+
 unsigned long Runnable::getPredictedRunningTime() {
     unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
 	

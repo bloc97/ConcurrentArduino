@@ -16,11 +16,20 @@ void JobScheduler::collectGarbage(int priority) {
                     priorities[priority][n] = NULL;
                 }
             }
-
         }
     }
 }
 
+int JobScheduler::indexOf(Runnable * runnable, int priority) {
+    if (priority < PRIORITY_NUM) {
+        for (int n=0; n<MAX_JOBS; n++) {
+            if (priorities[priority][n] == runnable) {
+                return n;
+            }
+        }
+    }
+    return -1;
+}
 
 bool JobScheduler::add(Runnable * runnable, int priority) {
     if (priority < PRIORITY_NUM) {
@@ -34,6 +43,43 @@ bool JobScheduler::add(Runnable * runnable, int priority) {
     return false;
 }
 
+bool JobScheduler::remove(Runnable * runnable, int priority) {
+    if (priority < PRIORITY_NUM) {
+        for (int n=0; n<MAX_JOBS; n++) {
+            if (priorities[priority][n] == runnable) {
+                priorities[priority][n] = NULL;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool JobScheduler::destroy(Runnable * runnable) {
+    bool isDestroyed = false;
+    for (int i=0; i<PRIORITY_NUM; i++) {
+        for (int n=0; n<MAX_JOBS; n++) {
+            if (priorities[i][n] == runnable) {
+                delete priorities[i][n];
+                priorities[i][n] = NULL;
+                isDestroyed = true;
+            }
+        }
+    }
+    return isDestroyed;
+}
+
+bool JobScheduler::changePriority(Runnable * runnable, int oldPriority, int newPriority) {
+    int index = indexOf(runnable, oldPriority);
+    if (index > -1) { //If exists
+        if (add(runnable, newPriority)) { //If task was successfully added
+            priorities[oldPriority][index] = NULL;
+            return true;
+        }
+    }
+    return false;
+}
+        
 bool JobScheduler::execute(Runnable * runnable, int priority) {
     if (add(runnable, priority)) {
         runnable->start();
@@ -42,6 +88,15 @@ bool JobScheduler::execute(Runnable * runnable, int priority) {
     return false;
 }
 
+bool JobScheduler::executeSynchronised(Runnable * runnable, int priority, unsigned long modulo) {
+    if (add(runnable, priority)) {
+        runnable->start();
+        runnable->setNextTargetStart(micros() - (micros%modulo) + runnable->getInitialWaitTime());
+        return true;
+    }
+    return false;
+}
+    
 bool JobScheduler::run() {
     unsigned long currentTime = micros();
 
@@ -90,13 +145,14 @@ bool JobScheduler::run() {
                 diffTime = diffTime + (priorities[i][indexes[i]]->getTargetWaitTime()/2); //Add leniency in the target time;
             }*/
             
-            //if (diffTime <= 0 && priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) { //If target time has passed and the predicted running time won't exceed maximum allocated time
+            //if (diffTime <= 0 && priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) {
             if (minimumTime <= 0 && priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) { //If target time has passed and the predicted running time won't exceed maximum allocated time
                 priorities[i][indexes[i]]->run();
                 return true;
             }
 
-            maximumAllocatedTime = min(maximumAllocatedTime, diffTime); //The minimum of the diffTimes is the maximum execution time allocated for the lower priorities
+            //maximumAllocatedTime = min(maximumAllocatedTime, diffTime); //The minimum of the diffTimes is the maximum execution time allocated for the lower priorities
+            maximumAllocatedTime = min(maximumAllocatedTime, minimumTime); //The minimum of the diffTimes is the maximum execution time allocated for the lower priorities
 
         }
         
@@ -104,7 +160,7 @@ bool JobScheduler::run() {
             //long diffTimeNonStrict = priorities[i][unStrictIndex]->getNextTargetStart() - currentTime; //Time difference between the Target time and now
             long halfTargetWaitTime = priorities[i][unStrictIndex]->getTargetWaitTime() / 2; //Half of the wait time
 
-            //if (diffTimeNonStrict <= halfTargetWaitTime && priorities[i][unStrictIndex]->getPredictedRunningTime() < maximumAllocatedTime) { //If the time is close to the target time, and running time won't exceed maximum allocated time
+            //if (diffTimeNonStrict <= halfTargetWaitTime && priorities[i][unStrictIndex]->getPredictedRunningTime() < maximumAllocatedTime) {
             if (minimumTimeUnstrict <= halfTargetWaitTime && priorities[i][unStrictIndex]->getPredictedRunningTime() < maximumAllocatedTime) { //If the time is close to the target time, and running time won't exceed maximum allocated time
                 priorities[i][unStrictIndex]->run();
                 return true;

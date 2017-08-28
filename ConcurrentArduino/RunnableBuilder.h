@@ -132,6 +132,18 @@ public:
         scheduler.add(runnable, priority);
         return runnable;
     }
+    
+    Runnable * startSynchronised(JobScheduler & scheduler, int priority, unsigned long modulo) {
+        if (interval == 0) {
+            doCatchup = false;
+            isPeriodicityStrict = false;
+        }
+        Runnable * runnable = new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
+        runnable->start();
+        scheduler.add(runnable, priority);
+        runnable->setNextTargetStart(micros() - (micros%modulo) + initialWait);
+        return runnable;
+    }
 
 private:
 

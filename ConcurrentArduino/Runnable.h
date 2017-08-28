@@ -33,6 +33,8 @@ public:
     
     unsigned long getMaxTrigger() const;
     unsigned long getTriggerCount() const;
+    
+    unsigned long getInitialWaitTime() const;
 
     unsigned long getLastRunningTime();
     unsigned long getPredictedRunningTime();
