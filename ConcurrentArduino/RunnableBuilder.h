@@ -81,9 +81,9 @@ public:
         return *this;
     }
 
-
+    /*
     RunnableBuilder & setInitialWait(unsigned long initialWait) {
-        setInitialWaitMicroseconds(initialWait*1000);
+        setInitialWaitMicroseconds(initialWait * 1000);
     }
     RunnableBuilder & setInitialWaitMicroseconds(unsigned long initialWaitMicroseconds) {
         this->initialWait = initialWaitMicroseconds;
@@ -96,7 +96,7 @@ public:
     RunnableBuilder & setIntervalMicroseconds(unsigned long intervalMicroseconds) {
         this->interval = intervalMicroseconds;
         return *this;
-    }
+    }*/
 
     RunnableBuilder & setLoopCount(unsigned long loopCount) {
         this->maxTrigger = loopCount;
@@ -127,21 +127,20 @@ public:
             doCatchup = false;
             isPeriodicityStrict = false;
         }
-        Runnable * runnable = new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
+        Runnable * runnable = build();
         runnable->start();
         scheduler.add(runnable, priority);
         return runnable;
     }
     
     Runnable * startSynchronised(JobScheduler & scheduler, int priority, unsigned long modulo) {
-        if (interval == 0) {
-            doCatchup = false;
-            isPeriodicityStrict = false;
-        }
-        Runnable * runnable = new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
-        runnable->start();
-        scheduler.add(runnable, priority);
-        runnable->setNextTargetStart(micros() - (micros%modulo) + initialWait);
+        return startSynchronisedMicroseconds(scheduler, priority, modulo * 1000);
+    }
+    
+    Runnable * startSynchronisedMicroseconds(JobScheduler & scheduler, int priority, unsigned long modulo) {
+        Runnable * runnable = start(scheduler, priority);
+        unsigned long microCount = micros();
+        runnable->setNextTargetStart(microCount - (microCount % modulo) + initialWait);
         return runnable;
     }
 

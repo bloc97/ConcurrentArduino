@@ -36,11 +36,11 @@ void Runnable::run() {
         if (isPeriodicityStrict) {
             nextTargetStartMicros = thisTargetStartMicros + targetWaitTimeMicrosecond;
         } else {
-            nextTargetStartMicros = thisTargetStartMicros + (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) + targetWaitTimeMicrosecond;
+            nextTargetStartMicros = thisTargetStartMicros + (((long)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) + targetWaitTimeMicrosecond;
         }
     } else {
         if (isPeriodicityStrict) {
-            nextTargetStartMicros = ( thisStartMicros - (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) ) + targetWaitTimeMicrosecond;
+            nextTargetStartMicros = ( thisStartMicros - (((long)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) ) + targetWaitTimeMicrosecond;
         } else {
             nextTargetStartMicros = thisStartMicros + targetWaitTimeMicrosecond;
         }
@@ -161,6 +161,7 @@ unsigned long Runnable::getInitialWaitTime() const {
 }
 
 unsigned long Runnable::getPredictedRunningTime() {
+    /*
     unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
 	
     //Using linear interpolation
@@ -172,6 +173,9 @@ unsigned long Runnable::getPredictedRunningTime() {
 	}
 	
     return twoLastRunningTime - averageRunningTimeMicrosecond;
+    */
+    
+    return averageRunningTimeMicrosecond; //Don't use linear interpolation (Testing purposes)
 	
 }
 

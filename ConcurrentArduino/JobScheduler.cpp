@@ -89,9 +89,14 @@ bool JobScheduler::execute(Runnable * runnable, int priority) {
 }
 
 bool JobScheduler::executeSynchronised(Runnable * runnable, int priority, unsigned long modulo) {
+    return executeSynchronisedMicroseconds(runnable, priority, modulo * 1000);
+}
+
+bool JobScheduler::executeSynchronisedMicroseconds(Runnable * runnable, int priority, unsigned long modulo) {
     if (add(runnable, priority)) {
         runnable->start();
-        runnable->setNextTargetStart(micros() - (micros%modulo) + runnable->getInitialWaitTime());
+        unsigned long microCount = micros();
+        runnable->setNextTargetStart(microCount - (microCount % modulo) + runnable->getInitialWaitTime());
         return true;
     }
     return false;
@@ -101,6 +106,7 @@ bool JobScheduler::run() {
     unsigned long currentTime = micros();
 
     long maximumAllocatedTime = 2147483647L; //Time allowed for the next job to run without affecting a job of higher priority
+    long allocatedTime[PRIORITY_NUM];
     //Starts as max long value, as 0 is the highest priority
 
     for (int i=0; i<PRIORITY_NUM; i++) {
@@ -108,6 +114,7 @@ bool JobScheduler::run() {
         long minimumTime = 2147483647L; //Earliest deadline first
         long minimumTimeUnstrict = 2147483647L; //Earliest deadline first
         indexes[i] = -1;
+        allocatedTime[i] = 2147483647L;
         int unStrictIndex = -1;
 
         for (int n=0; n<MAX_JOBS; n++) { //Find the task with earliest deadline
@@ -115,6 +122,12 @@ bool JobScheduler::run() {
                 if (priorities[i][n]->isRunning()) {
                     
                     long thisTime = priorities[i][n]->getNextTargetStart() - currentTime;
+                    
+                    if (priorities[i][n]->getMaxTrigger() != 0 && (thisTime < 0) && (!priorities[i][n]->isDoCatchup()) && (priorities[i][n]->getMaxTrigger() - priorities[i][n]->getTriggerCount()) * priorities[i][n]->getTargetWaitTime() < -thisTime) {
+                        delete priorities[i][n];
+                        priorities[i][n] = NULL;
+                        continue;
+                    }
                     
                     if (!priorities[i][n]->isStrict()) { //If task is not time strict
                         if (thisTime < minimumTimeUnstrict) { //Sort the earliest unstrict task
@@ -127,7 +140,9 @@ bool JobScheduler::run() {
                     if (thisTime < minimumTime) { //Sort the earliest strict task
                         minimumTime = thisTime;
                         indexes[i] = n;
+                        allocatedTime[i] = thisTime;
                     }
+                    
                 } else if (priorities[i][n]->isDestroying()) { //Garbage collection
                     delete priorities[i][n];
                     priorities[i][n] = NULL;
@@ -146,9 +161,13 @@ bool JobScheduler::run() {
             }*/
             
             //if (diffTime <= 0 && priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) {
-            if (minimumTime <= 0 && priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) { //If target time has passed and the predicted running time won't exceed maximum allocated time
-                priorities[i][indexes[i]]->run();
-                return true;
+            if (minimumTime <= 0) { //If target time has passed
+                if (priorities[i][indexes[i]]->getPredictedRunningTime() < maximumAllocatedTime) {//If predicted running time won't exceed maximum allocated time
+                    priorities[i][indexes[i]]->run();
+                    return true;
+                } else if (!priorities[i][indexes[i]]->isDoCatchup()) { //If don't catch up, calculate next target time
+                    priorities[i][indexes[i]]->setNextTargetStart(priorities[i][indexes[i]]->getNextTargetStart() + priorities[i][indexes[i]]->getTargetWaitTime());
+                }
             }
 
             //maximumAllocatedTime = min(maximumAllocatedTime, diffTime); //The minimum of the diffTimes is the maximum execution time allocated for the lower priorities
@@ -169,6 +188,15 @@ bool JobScheduler::run() {
         }
         
     }
+    
+    if (maximumAllocatedTime < 0) {
+        for (int i=PRIORITY_NUM-1; i>=0; i--) {
+            if (allocatedTime[i] >= 0 && allocatedTime[i] < 10000000L) {
+                maximumAllocatedTime = allocatedTime[i];
+                break;
+            }
+        }
+    }
 
     //If CPU is to be Idle, sleep for a while
     if (maximumAllocatedTime > 1000) {
@@ -178,7 +206,7 @@ bool JobScheduler::run() {
         } else {
             delay(10000);
         }
-    } else {
+    } else if (maximumAllocatedTime >= 0) {
         delayMicroseconds(maximumAllocatedTime);
     }
     return false;

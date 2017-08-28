@@ -15,6 +15,7 @@ class JobScheduler {
         bool changePriority(Runnable * runnable, int oldPriority, int newPriority);
         bool execute(Runnable * runnable, int priority);
         bool executeSynchronised(Runnable * runnable, int priority, unsigned long modulo);
+        bool executeSynchronisedMicroseconds(Runnable * runnable, int priority, unsigned long modulo);
         
         
         void collectGarbage();
