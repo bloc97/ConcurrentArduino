@@ -9,7 +9,10 @@ class JobScheduler {
         
         bool run();
         bool add(Runnable * runnable, int priority);
-        void execute(Runnable * runnable, int priority);
+        bool execute(Runnable * runnable, int priority);
+        
+        void collectGarbage();
+        void collectGarbage(int priority);
 		
     private:
         
@@ -18,12 +21,6 @@ class JobScheduler {
 
         Runnable *priorities[PRIORITY_NUM][MAX_JOBS];
         unsigned int indexes[PRIORITY_NUM];
-
-
-        void preStep();
-
-        bool runStrict(); //Jobs where start time is strict, must happen closest to target Microsecond counter
-        bool runNonStrict(); //Jobs where start time is not strict, allows to run on idle cpu
         
 };
 
