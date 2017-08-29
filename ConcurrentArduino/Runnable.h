@@ -33,12 +33,15 @@ public:
     
     unsigned long getMaxTrigger() const;
     unsigned long getTriggerCount() const;
+    
+    unsigned long getInitialWaitTime() const;
 
     unsigned long getLastRunningTime();
     unsigned long getPredictedRunningTime();
     long getLastStartOffsetTime();
 
     void setFunction(void(*f)());
+    void setProperties(bool isStrict, bool doCatchup, bool isPeriodic);
     void setMaxTrigger(int maxTrigger);
     void setNextTargetStart(unsigned long micros);
     void setInitialWait(unsigned long micros);

@@ -36,11 +36,11 @@ void Runnable::run() {
         if (isPeriodicityStrict) {
             nextTargetStartMicros = thisTargetStartMicros + targetWaitTimeMicrosecond;
         } else {
-            nextTargetStartMicros = thisTargetStartMicros + (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) + targetWaitTimeMicrosecond;
+            nextTargetStartMicros = thisTargetStartMicros + (((long)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) + targetWaitTimeMicrosecond;
         }
     } else {
         if (isPeriodicityStrict) {
-            nextTargetStartMicros = ( thisStartMicros - (((int)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) ) + targetWaitTimeMicrosecond;
+            nextTargetStartMicros = ( thisStartMicros - (((long)(thisStartMicros - thisTargetStartMicros))%targetWaitTimeMicrosecond ) ) + targetWaitTimeMicrosecond;
         } else {
             nextTargetStartMicros = thisStartMicros + targetWaitTimeMicrosecond;
         }
@@ -76,6 +76,12 @@ void Runnable::destroy() {
 
 void Runnable::setFunction(void(*f)()) {
     main = f;
+}
+
+void Runnable::setProperties(bool isStrict, bool doCatchup, bool isPeriodic) {
+    this->isStartTimeStrict = isStrict;
+    this->doCatchup = doCatchup;
+    this->isPeriodicityStrict = isPeriodic;
 }
 
 void Runnable::setMaxTrigger(int maxTrigger) {
@@ -150,7 +156,12 @@ unsigned long Runnable::getTriggerCount() const {
     return triggerCount;
 }
     
+unsigned long Runnable::getInitialWaitTime() const {
+    return initialWaitMicrosecond;
+}
+
 unsigned long Runnable::getPredictedRunningTime() {
+    /*
     unsigned long lastRunningTime = lastEndMicros - lastStartMicros;
 	
     //Using linear interpolation
@@ -162,6 +173,9 @@ unsigned long Runnable::getPredictedRunningTime() {
 	}
 	
     return twoLastRunningTime - averageRunningTimeMicrosecond;
+    */
+    
+    return averageRunningTimeMicrosecond; //Don't use linear interpolation (Testing purposes)
 	
 }
 
