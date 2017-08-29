@@ -117,6 +117,12 @@ public:
         this->isPeriodicityStrict = isPeriodicityStrict;
         return *this;
     }
+    
+    RunnableBuilder & setRealtime() {
+        this->doCatchup = false;
+        this->isPeriodicityStrict = false;
+        return *this;
+    }
 
     Runnable * build() {
         return new Runnable(f, interval, initialWait, maxTrigger, isStartTimeStrict, doCatchup, isPeriodicityStrict);
